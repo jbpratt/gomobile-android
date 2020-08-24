@@ -3,6 +3,8 @@ name: gomobile-android
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+    - '**/README.md'
 
 jobs:
   build:
@@ -19,5 +21,7 @@ jobs:
       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
     - name: Build image
       run: docker build . -t docker.pkg.github.com/jbpratt/gomobile-android/gomobile-android:latest
+    - name: Test image
+      run: docker run -v $(pwd):/go/src/x/ --rm docker.pkg.github.com/jbpratt/gomobile-android/gomobile-android:latest /bin/bash -c "cd /go/src/x && gomobile init && gomobile bind -o ./sample.aar -target=android ./sample"
     - name: Publish image
       run: docker push docker.pkg.github.com/jbpratt/gomobile-android/gomobile-android:latest

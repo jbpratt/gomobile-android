@@ -44,6 +44,11 @@ RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+ENV PATH /usr/local/go/bin:$PATH
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+WORKDIR $GOPATH
+
 RUN go get golang.org/x/mobile/cmd/gomobile
-ENV PATH=$PATH:/root/go/bin
 RUN gomobile version

@@ -1,14 +1,15 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 WORKDIR /root
 ARG DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get -qqy update && \
-    apt-get -qqy upgrade && \
     apt-get -qqy --no-install-recommends install \
     software-properties-common build-essential \
-    wget git unzip openjdk-8-jdk -qqy
-
+    wget git unzip openjdk-8-jdk -qqy && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre" \
     PATH=$PATH:$JAVA_HOME/bin
@@ -39,7 +40,9 @@ ENV PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools
 
 RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get update && \
-    apt-get install -y golang-go 
+    apt-get -qqy --no-install-recommends install golang-go && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN go get golang.org/x/mobile/cmd/gomobile
 ENV PATH=$PATH:/root/go/bin
